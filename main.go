@@ -7,11 +7,11 @@ import (
 )
 
 var storeInt []bool
-var prime = make(map[int]struct{}, 664579)
+var prime = make(map[int]struct{})
 var totalCircularPrime int
 
 const (
-	million100  = 100000000 // 664,579
+	million100  = 100000000 // 5,761,455
 	million10   = 10000000  // 664,579
 	million1    = 1000000   // 78,498
 	thousand100 = 100000    // 9,592
@@ -22,17 +22,18 @@ const (
 
 func main() {
 	const maxNumber = million10
-	fmt.Println(time.Now().Format(time.StampNano))
-	findNrOfCircularPrimeNumber1(maxNumber)
-	countCircularPrime1()
-	fmt.Println(time.Now().Format(time.StampNano))
+	t := time.Now()
+	findPrimeNumbers(maxNumber)
+	countCircularPrime()
+	fmt.Println("Total duration:", time.Since(t))
 
 	fmt.Println("Max number is: ", maxNumber)
 	fmt.Println("Number of prime number is: ", len(prime))
 	fmt.Println("Number of circular prime number is ", totalCircularPrime)
 }
 
-func findNrOfCircularPrimeNumber1(input int) {
+func findPrimeNumbers(input int) {
+	// sqrtInput := int(math.Sqrt(float64(input)))
 	storeInt = make([]bool, input+1)
 
 	// Add 2
@@ -50,8 +51,8 @@ func findNrOfCircularPrimeNumber1(input int) {
 	}
 }
 
-func countCircularPrime1() {
-	circular := make(map[int]struct{}, len(prime))
+func countCircularPrime() {
+	circular := make(map[int]struct{})
 
 	for input := range prime {
 		inputStr := strconv.Itoa(input)
@@ -76,7 +77,10 @@ func countCircularPrime1() {
 				}
 			}
 
-			totalCircularPrime += nrOfCircularPrime
+			if nrOfCircularPrime > 0 {
+				totalCircularPrime += nrOfCircularPrime
+
+			}
 		}
 	}
 }
