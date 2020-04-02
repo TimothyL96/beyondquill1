@@ -7,7 +7,7 @@ import (
 )
 
 var storeInt []bool
-var prime = make(map[int]struct{})
+var prime = make(map[int]struct{}, 664579)
 var totalCircularPrime int
 
 const (
@@ -51,28 +51,32 @@ func findNrOfCircularPrimeNumber1(input int) {
 }
 
 func countCircularPrime1() {
+	circular := make(map[int]struct{}, len(prime))
+
 	for input := range prime {
 		inputStr := strconv.Itoa(input)
 		nrOfCircularPrime := len(inputStr)
+		_, ok := circular[input]
 
-		for i, nrOfCombination := 0, nrOfCircularPrime-1; i < nrOfCombination; i++ {
-			// Create nrOfCombination
-			inputStr = inputStr[1:] + inputStr[:1]
-			combinationInt, _ := strconv.Atoi(inputStr)
+		if !ok {
+			for i, nrOfCombination := 0, nrOfCircularPrime-1; i < nrOfCombination; i++ {
+				// Create nrOfCombination
+				inputStr = inputStr[1:] + inputStr[:1]
+				combinationInt, _ := strconv.Atoi(inputStr)
+				circular[combinationInt] = struct{}{}
 
-			if combinationInt == input {
-				nrOfCircularPrime--
+				if combinationInt == input {
+					nrOfCircularPrime--
+				}
+
+				// Check if its prime number
+				if _, ok := prime[combinationInt]; !ok {
+					nrOfCircularPrime = 0
+					break
+				}
 			}
 
-			// Check if its prime number
-			if _, ok := prime[combinationInt]; !ok {
-				nrOfCircularPrime = 0
-				break
-			}
-		}
-
-		if nrOfCircularPrime != 0 {
-			totalCircularPrime++
+			totalCircularPrime += nrOfCircularPrime
 		}
 	}
 }
