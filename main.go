@@ -39,7 +39,7 @@ func main() {
 	// Stop the timer
 	totalDuration = time.Since(t)
 
-	// Print the result
+	// Print the results
 	fmt.Println("Total duration:", totalDuration.String())
 	fmt.Println("Max number is: ", maxNumber)
 	fmt.Println("Number of prime number is: ", len(primeList))
@@ -53,7 +53,7 @@ func findPrimeNumbers(input int) {
 	// Add 2
 	primeList = append(primeList, 2)
 
-	// Iterate through only odd numbers till input
+	// Iterate through only odd numbers till value of input reached
 	for i := 3; i <= input; i += 2 {
 		if storeInt[i>>1] == false {
 			// Store current number as prime number
@@ -68,59 +68,60 @@ func findPrimeNumbers(input int) {
 
 }
 
+// *****
+// Re-use storeInt to mark visited circular prime numbers
+// *****
 func countCircularPrime() {
-	// Create a map to quickly identify which prime number is checked
-	circularPrime := make(map[int]struct{})
-
 	// Loop through all prime numbers
 	for i := len(primeList) - 1; i >= 0; i-- {
-		// Get if current prime number exists in the circularPrime map
-		_, ok := circularPrime[primeList[i]]
 
-		// Process only if this prime number is unprocessed (Not in the circularPrime map)
-		if !ok {
-			// Convert prime number to string for filtering
-			inputStr := strconv.Itoa(primeList[i])
-
-			// Skip checking for circular prime number if the number contains any number "024568" and the number not 2 or 5.
-			//
-			// As it will not be a circular prime number if rotated an even number to the last digit.
-			if strings.ContainsAny(inputStr, circularPrimeFilter) && primeList[i] != 2 && primeList[i] != 5 {
-				continue
-			}
-
-			// Get all possible combination
-			nrOfPossibleRotation := len(inputStr)
-
-			// Add current prime number to circularPrime to mark it as visited
-			circularPrime[primeList[i]] = struct{}{}
-
-			// Iterate through each possible combination, except the original number itself
-			for j, nrOfCombination := 0, nrOfPossibleRotation-1; j < nrOfCombination; j++ {
-				// Rotate the prime number
-				inputStr = inputStr[1:] + inputStr[:1]
-
-				// Convert the rotated string back to number
-				combinationInt, _ := strconv.Atoi(inputStr)
-
-				// Mark rotated number in circular prime as visited
-				circularPrime[combinationInt] = struct{}{}
-
-				// If rotated number is same as original number, minus 1 combination
-				// Ex: 11 rotate to 11
-				if combinationInt == primeList[i] {
-					nrOfPossibleRotation--
-				}
-
-				// Break if rotated number is not a prime number
-				if storeInt[combinationInt>>1] {
-					nrOfPossibleRotation = 0
-					break
-				}
-			}
-
-			// Add possible rotation to total number of circular prime numbers
-			totalCircularPrime += nrOfPossibleRotation
+		// Skip if number is marked in storeInt or the number is not 2.
+		// Second condition checking is because 2>>1 will get 1 instead of 0
+		if storeInt[primeList[i]>>1] && primeList[i] != 2 {
+			continue
 		}
+
+		// Convert prime number to string for filtering
+		inputStr := strconv.Itoa(primeList[i])
+
+		// Skip checking for circular prime number if the number contains any number "024568" and the number is not 2 or 5.
+		// As it will not be a circular prime number if rotated the even number to the last digit.
+		if strings.ContainsAny(inputStr, circularPrimeFilter) &&
+			primeList[i] != 2 && primeList[i] != 5 {
+			continue
+		}
+
+		// Get all possible combinations
+		nrOfPossibleRotation := len(inputStr)
+
+		// Iterate through each possible combination, except the original number itself
+		for j, nrOfCombination := 0, nrOfPossibleRotation-1; j < nrOfCombination; j++ {
+			// Rotate the prime number
+			inputStr = inputStr[1:] + inputStr[:1]
+
+			// Convert the rotated string back to number
+			combinationInt, _ := strconv.Atoi(inputStr)
+
+			// If rotated number is same as original number, minus 1 combination
+			// Ex: 11 rotate to 11
+			if combinationInt == primeList[i] {
+				nrOfPossibleRotation--
+			}
+
+			// Break if rotated number is not a prime number
+			if storeInt[combinationInt>>1] {
+				nrOfPossibleRotation = 0
+				break
+			}
+
+			// Mark rotated number in storeInt as visited
+			storeInt[combinationInt>>1] = true
+		}
+
+		// Mark current prime number in storeInt as visited
+		storeInt[primeList[i]>>1] = true
+
+		// Add total possible rotation to total number of circular prime numbers
+		totalCircularPrime += nrOfPossibleRotation
 	}
 }
