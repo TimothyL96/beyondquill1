@@ -10,7 +10,7 @@ import (
 )
 
 var storeInt []bool
-var prime = make(map[int]struct{})
+var prime = make(map[uint32]struct{})
 var totalCircularPrime int
 
 const (
@@ -21,7 +21,7 @@ const (
 	thousand10  = 10000     // 1,229
 	thousand    = 1000      // 168
 	hundred     = 100       // 25 prime
-	evenFilter  = "02468"
+	evenFilter  = "865420"
 )
 
 func main() {
@@ -39,14 +39,14 @@ func main() {
 	fmt.Println("Number of circular prime number is ", totalCircularPrime)
 }
 
-func findPrimeNumbers(input int) {
+func findPrimeNumbers(input uint32) {
 	storeInt = make([]bool, input>>1)
 
 	// Add 2
 	storeInt[0] = true
 	prime[2] = struct{}{}
 
-	for i := 3; i <= input; i += 2 {
+	for i := uint32(3); i <= input; i += 2 {
 		if storeInt[i>>1] == false {
 			prime[i] = struct{}{}
 
@@ -58,14 +58,14 @@ func findPrimeNumbers(input int) {
 }
 
 func countCircularPrime() {
-	circular := make(map[int]struct{})
+	circular := make(map[uint32]struct{})
 
 	for input := range prime {
 		_, ok := circular[input]
 
 		if !ok {
-			inputStr := strconv.Itoa(input)
-			if strings.ContainsAny(inputStr, evenFilter) && input != 2 {
+			inputStr := itoa(input)
+			if strings.ContainsAny(inputStr, evenFilter) && input != 2 && input != 5 {
 				continue
 			}
 
@@ -75,7 +75,7 @@ func countCircularPrime() {
 			for i, nrOfCombination := 0, nrOfCircularPrime-1; i < nrOfCombination; i++ {
 				// Create nrOfCombination
 				inputStr = inputStr[1:] + inputStr[:1]
-				combinationInt, _ := strconv.Atoi(inputStr)
+				combinationInt := atoi(inputStr)
 				circular[combinationInt] = struct{}{}
 
 				if combinationInt == input {
@@ -92,4 +92,19 @@ func countCircularPrime() {
 			totalCircularPrime += nrOfCircularPrime
 		}
 	}
+}
+
+func atoi(s string) uint32 {
+	// Fast path for small integers that fit int type.
+	var n uint32
+	for _, ch := range []byte(s) {
+		ch -= '0'
+		n = n*10 + uint32(ch)
+	}
+
+	return n
+}
+
+func itoa(i uint32) string {
+	return strconv.FormatInt(int64(i), 10)
 }
