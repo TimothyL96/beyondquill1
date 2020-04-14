@@ -76,7 +76,7 @@ func countCircularPrime() {
 
 		// Process only if this prime number is unprocessed (Not in the circular map)
 		if !ok {
-			inputStr := itoa(primeList[i])
+			inputStr := strconv.Itoa(primeList[i])
 			if strings.ContainsAny(inputStr, evenFilter) && primeList[i] != 2 && primeList[i] != 5 {
 				continue
 			}
@@ -87,7 +87,7 @@ func countCircularPrime() {
 			for j, nrOfCombination := 0, nrOfPossibleRotation-1; j < nrOfCombination; j++ {
 				// Create nrOfCombination
 				inputStr = inputStr[1:] + inputStr[:1]
-				combinationInt := atoi(inputStr)
+				combinationInt, _ := strconv.Atoi(inputStr)
 				circular[combinationInt] = struct{}{}
 
 				if combinationInt == primeList[i] {
@@ -104,19 +104,4 @@ func countCircularPrime() {
 			totalCircularPrime += nrOfPossibleRotation
 		}
 	}
-}
-
-func atoi(s string) int {
-	// Fast path for small integers that fit int type.
-	var n int
-	for _, ch := range []byte(s) {
-		ch -= '0'
-		n = n*10 + int(ch)
-	}
-
-	return n
-}
-
-func itoa(i int) string {
-	return strconv.FormatInt(int64(i), 10)
 }
