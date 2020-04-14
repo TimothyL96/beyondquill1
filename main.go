@@ -82,7 +82,7 @@ func countCircularPrime() {
 	// Loop through all prime numbers
 	for i := len(primeList) - 1; i >= 0; i-- {
 
-		// Skip if number is marked in storeInt or the number is not 2.
+		// Skip if number is marked in storeInt and the number is not 2.
 		// Second condition checking is because 2>>1 will get 1 instead of 0
 		if storeInt[primeList[i]>>1] && primeList[i] != 2 {
 			continue
