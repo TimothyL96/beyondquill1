@@ -7,9 +7,16 @@ import (
 	"time"
 )
 
-var storeInt []bool
-var primeList []int
-var totalCircularPrime int
+var (
+	// Store all odd numbers for marking
+	storeInt []bool
+
+	// Store only prime numbers
+	primeList []int
+
+	// Store result of total circular prime numbers
+	totalCircularPrimeNumbers int
+)
 
 const (
 	million100          = 100000000 // 5,761,455 - 55
@@ -18,7 +25,7 @@ const (
 	thousand100         = 100000    // 9,592 - 43
 	thousand10          = 10000     // 1,229 - 33
 	thousand            = 1000      // 168 - 25
-	hundred             = 100       // 25 prime circular 13
+	hundred             = 100       // 25 prime - 13 circular
 	circularPrimeFilter = "865420"
 )
 
@@ -43,7 +50,7 @@ func main() {
 	fmt.Println("Total duration:", totalDuration.String())
 	fmt.Println("Max number is: ", maxNumber)
 	fmt.Println("Number of prime number is: ", len(primeList))
-	fmt.Println("Number of circular prime number is ", totalCircularPrime)
+	fmt.Println("Number of circular prime number is ", totalCircularPrimeNumbers)
 }
 
 func findPrimeNumbers(input int) {
@@ -122,6 +129,6 @@ func countCircularPrime() {
 		storeInt[primeList[i]>>1] = true
 
 		// Add total possible rotation to total number of circular prime numbers
-		totalCircularPrime += nrOfPossibleRotation
+		totalCircularPrimeNumbers += nrOfPossibleRotation
 	}
 }
